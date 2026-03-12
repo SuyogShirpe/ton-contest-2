@@ -125,36 +125,61 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawBoardLines() {
-        const width = elements.board.clientWidth;
-        const height = elements.board.clientHeight;
+    const width = elements.board.clientWidth;
+    const height = elements.board.clientHeight;
+    
+    if (!width || !height) return; 
+
+    elements.svgOverlay.setAttribute('width', width);
+    elements.svgOverlay.setAttribute('height', height);
+
+    // 1. Define MINIMALIST Neon Glow Filters (stdDeviation reduced to 2 for a tighter aura)
+    let svgHTML = `
+        <defs>
+            <filter id="green-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+            <filter id="red-glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+        </defs>
+    `;
+
+    const getPixels = (pos) => {
+        const coords = getCoordinates(pos);
+        return {
+            x: (coords.x) / 100 * width,
+            y: (coords.y) / 100 * height
+        };
+    };
+
+    const drawLine = (start, end, color, glowId) => {
+        const p1 = getPixels(parseInt(start));
+        const p2 = getPixels(end);
+
+        // Layer A: SUBTLE OUTER AURA (Reduced width to 10 and opacity to 0.15)
+        svgHTML += `<line class="draw-line" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" 
+            stroke="${color}" stroke-width="10" stroke-linecap="round" opacity="0.15" filter="url(#${glowId})" />`;
         
-        if (!width || !height) return; 
+        // Layer B: CLEAN SOLID CORE (Reduced width to 4 for a sharp look)
+        svgHTML += `<line class="draw-line" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" 
+            stroke="${color}" stroke-width="4" stroke-linecap="round" opacity="1" />`;
+    };
 
-        elements.svgOverlay.setAttribute('width', width);
-        elements.svgOverlay.setAttribute('height', height);
-
-        let svgHTML = '';
-
-        const getPixels = (pos) => {
-            const coords = getCoordinates(pos);
-            return {
-                x: (coords.x) / 100 * width, // Removed the old +10 offset
-                y: (coords.y) / 100 * height // Removed the old +5 offset
-            };
-        };
-
-        const drawLine = (start, end, color, extraClass = '') => {
-            const p1 = getPixels(parseInt(start));
-            const p2 = getPixels(end);
-            svgHTML += `<line class="draw-line ${extraClass}" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="${color}" stroke-width="12" stroke-linecap="round" opacity="0.85" />`;
-            svgHTML += `<line class="draw-line" x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="#FFFFFF" stroke-width="2" opacity="0.9" />`;
-        };
-
-        for (const [start, end] of Object.entries(CONFIG.greenCandles)) drawLine(start, end, "#00C853", "pump-glow");
-        for (const [start, end] of Object.entries(CONFIG.redCandles)) drawLine(start, end, "#FF3B30");
-
-        elements.svgOverlay.innerHTML = svgHTML;
+    // Draw Pumps (Green)
+    for (const [start, end] of Object.entries(CONFIG.greenCandles)) {
+        drawLine(start, end, "#00C853", "green-glow");
     }
+
+    // Draw Dumps (Red)
+    for (const [start, end] of Object.entries(CONFIG.redCandles)) {
+        drawLine(start, end, "#FF3B30", "red-glow");
+    }
+
+    elements.svgOverlay.innerHTML = svgHTML;
+}
 
     // 3. Update the token's CSS transform to center perfectly
     function updatePlayerPosition(position, isMoving = false) {
