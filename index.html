@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TON Pumps & Dumps</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="header">
+        <h1>TON Pumps & Dumps</h1>
+        <p class="signature">Artwork by:@DieXnst</p>
+    </div>
+
+    <div id="start-screen" class="screen active">
+        <h2>Choose Your Token</h2>
+        <div class="token-grid">
+            <div class="token-option selected" data-token="ton">
+                <div class="token-preview">
+                    <img src="assests/ton.jpeg" alt="TON">
+                </div>
+                <span>TON</span>
+            </div>
+            <div class="token-option" data-token="dogs">
+                <div class="token-preview">
+                    <img src="assests/dogs.jpeg" alt="DOGS">
+                </div>
+                <span>DOGS</span>
+            </div>
+            <div class="token-option" data-token="notcoin">
+                <div class="token-preview">
+                    <img src="assests/notcoin.png" alt="NOTCOIN">
+                </div>
+                <span>NOTCOIN</span>
+            </div>
+            <div class="token-option" data-token="redo">
+                <div class="token-preview">
+                    <img src="assests/redo.webp" alt="REDO">
+                </div>
+                <span>REDO</span>
+            </div>
+            <div class="token-option" data-token="blum">
+                <div class="token-preview">
+                    <img src="assests/blum.jpeg" alt="BLUM">
+                </div>
+                <span>BLUM</span>
+            </div>
+            <div class="token-option" data-token="hamster">
+                <div class="token-preview">
+                    <img src="assests/hmstr.png" alt="HAMSTER">
+                </div>
+                <span>HAMSTER</span>
+            </div>
+        </div>
+        <button id="start-game-btn">Start Trading</button>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div class="game-container">
+            <div id="board">
+                <svg id="lines-overlay"></svg>
+                
+                <img id="player" src="assests/ton.jpeg" alt="Player Token">
+                
+                <div id="win-screen">
+                    <h2>50X GAINS! 🚀</h2>
+                    <p>You reached the moon!</p>
+                    <button id="play-again-btn" style="margin-top: 20px; width: 80%;">Trade Again</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <img class="dice-display" id="dice" src="assests/dice1.png" alt="Dice">
+            <button id="roll-btn">Roll Dice</button>
+            <p id="status">Tap roll to start trading!</p>
+        </div>
+    </div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>

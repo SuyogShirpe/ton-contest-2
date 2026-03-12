@@ -1,0 +1,310 @@
+:root {
+    /* Brand Colors */
+    --ton-blue: #0098EA;
+    --ton-blue-glow: rgba(0, 152, 234, 0.4);
+    --bull-green: #00C853;
+    --bear-red: #FF3B30;
+    
+    /* UI Colors */
+    --bg-dark: #121212;
+    --cell-dark: #1E1E1E;
+    --cell-light: #2A2A2A;
+    --text-main: #FFFFFF;
+    --text-muted: #A0A0A0;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    user-select: none; /* Prevents accidental highlighting on touch screens */
+    -webkit-tap-highlight-color: transparent; /* Removes blue tap box on mobile */
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px 15px;
+}
+
+/* --- Typography & Headers --- */
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    font-size: 1.8rem;
+    color: var(--ton-blue);
+    text-shadow: 0 0 15px var(--ton-blue-glow);
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.signature {
+    font-style: italic;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* --- Screen Management --- */
+.screen {
+    display: none;
+    width: 100%;
+    max-width: 400px;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 0.4s ease-in-out;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Token Selection --- */
+#start-screen h2 {
+    margin-bottom: 15px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.token-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 10px; /* Tighter gaps for a cleaner cluster */
+    width: 100%;
+    max-width: 340px; /* Keeps the grid from stretching too wide on tablets */
+    margin-bottom: 25px;
+}
+
+.token-option {
+    background: var(--cell-dark);
+    border: 1.5px solid transparent; /* Finer border for elegance */
+    border-radius: 12px; /* Slightly sharper, modern corners */
+    padding: 10px 4px; /* Reduced padding makes the block physically smaller */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px; /* Less empty space between the image and text */
+    cursor: pointer;
+    transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.token-option:active { transform: scale(0.95); } /* Snappier tap animation */
+
+.token-option.selected {
+    border-color: var(--ton-blue);
+    background: rgba(0, 152, 234, 0.08);
+    box-shadow: 0 4px 10px rgba(0, 152, 234, 0.15); /* More subtle, refined glow */
+    transform: translateY(-1px);
+}
+
+.token-option span {
+    font-weight: 600;
+    font-size: 0.7rem; /* Smaller, crisper text */
+    letter-spacing: 0.5px;
+    color: var(--text-muted); /* Dims text slightly when unselected */
+    transition: color 0.15s ease;
+}
+
+.token-option.selected span {
+    color: var(--text-main); /* Brightens text when selected */
+}
+
+.token-preview {
+    width: 38px; /* Shrunk from 50px for a more delicate look */
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.token-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 50%; /* Keeps all logos perfectly circular */
+    background-color: var(--cell-light);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Tighter, more realistic shadow */
+    border: 1px solid rgba(255, 255, 255, 0.08); /* Very fine, subtle ring */
+}
+
+/* --- Main Game Board --- */
+.game-container { 
+    width: 100%; 
+    max-width: 380px; /* Slimmed down slightly to prevent edge-hugging */
+    margin: 0 auto;
+}
+
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    width: 100%;
+    
+    /* INCREASED HEIGHT: Taking advantage of the extra space */
+    height: 60vh; /* Increased from 52vh to 60vh */
+    max-height: 620px; /* Increased from 550px to let it stretch more */
+    min-height: 400px; 
+    
+    background: #080808;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+    overflow: hidden; 
+}
+
+#lines-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.15);
+    font-weight: 700;
+    z-index: 1;
+}
+
+.cell:nth-child(even) { background-color: var(--cell-dark); }
+.cell:nth-child(odd) { background-color: var(--cell-light); }
+
+/* --- Player Token --- */
+#player {
+    /* Made it a little bit smaller (from 10% to 8%) */
+    width: 8%; 
+    aspect-ratio: 1 / 1; 
+    position: absolute;
+    transition: left 0.85s cubic-bezier(0.25, 1, 0.5, 1), 
+                top 0.85s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.4s ease; 
+    z-index: 10;
+    
+    /* Keeps it perfectly centered in the square */
+    transform: translate(-50%, -50%); 
+    
+    object-fit: cover; 
+    border-radius: 50%; 
+    background-color: var(--cell-dark);
+    border: 1.5px solid rgba(255, 255, 255, 0.9); 
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+}
+
+/* --- Controls & UI --- */
+.controls {
+    margin-top: 15px; /* Tighter gap below the board */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Reduced gap between dice, button, and text */
+}
+
+.dice-display { 
+    width: 50px; /* Shrunk from 65px */
+    height: 50px; 
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
+    transition: transform 0.2s;
+}
+
+.rolling { animation: shake 0.3s infinite; }
+
+@keyframes shake {
+    0% { transform: rotate(0deg) scale(1.1); }
+    25% { transform: rotate(15deg) scale(1.1); }
+    50% { transform: rotate(0deg) scale(1.1); }
+    75% { transform: rotate(-15deg) scale(1.1); }
+    100% { transform: rotate(0deg) scale(1.1); }
+}
+
+button {
+    background-color: var(--ton-blue);
+    color: white; 
+    border: none; 
+    padding: 12px 30px; /* Slimmer padding for a smaller button */
+    font-size: 1.05rem; /* Slightly smaller text */
+    font-weight: 700; 
+    border-radius: 25px;
+    cursor: pointer; 
+    
+    width: 75%; /* Doesn't stretch as wide across the screen */
+    max-width: 280px;
+    
+    box-shadow: 0 4px 15px var(--ton-blue-glow);
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+button:active { 
+    transform: scale(0.96); 
+    box-shadow: 0 2px 10px var(--ton-blue-glow);
+}
+
+/* Pulse animation for the Start Button */
+#start-game-btn {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 152, 234, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 152, 234, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 152, 234, 0); }
+}
+
+#status { 
+    font-size: 0.95rem; /* Made status text a bit sleeker */
+    font-weight: 500;
+    text-align: center; 
+    min-height: 20px; 
+    color: var(--text-muted); 
+}
+
+/* --- Win Screen --- */
+#win-screen {
+    display: none; 
+    /* Changed from absolute to fixed so it overlays the entire phone screen */
+    position: fixed; 
+    top: 0; left: 0; 
+    width: 100vw; height: 100vh; 
+    background: rgba(18, 18, 18, 0.95); 
+    z-index: 999; /* Guarantees it stays on top of the dice and header */
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    backdrop-filter: blur(8px); 
+}
+
+#win-screen h2 { 
+    color: var(--bull-green); 
+    font-size: 2.8rem; /* Made the text slightly bigger */
+    margin-bottom: 10px;
+    text-shadow: 0 0 25px rgba(0, 200, 83, 0.5);
+    text-align: center;
+}
+
+#win-screen p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    text-align: center;
+    padding: 0 20px;
+}
+
+#play-again-btn {
+    width: 80%;
+    max-width: 300px; /* Keeps the button from stretching too wide */
+}
