@@ -213,19 +213,25 @@ document.addEventListener('DOMContentLoaded', () => {
             const rollValue = rollIndex + 1;
             elements.diceDisplay.src = CONFIG.diceImages[rollIndex];
             
-            let newPos = state.currentPos + rollValue;
-            
-            // FIXED LOGIC: Cap at 50 to win immediately, no bouncing backwards!
-            if (newPos > CONFIG.maxPos) {
-                newPos = CONFIG.maxPos; 
+            // Calculate how many steps are needed to reach the end
+            const stepsToWin = CONFIG.maxPos - state.currentPos;
+
+            // --- EXACT ROLL LOGIC ---
+            if (rollValue <= stepsToWin) {
+                // If roll is less than or equal to required steps, move normally
+                state.currentPos += rollValue;
+                elements.statusText.innerText = `Rolled a ${rollValue}!`;
+                updatePlayerPosition(state.currentPos, true);
+                
+                // Only check for win/candles if we actually moved
+                setTimeout(() => checkTriggers(state.currentPos), 900);
+            } else {
+                // If roll is too high, the player doesn't move
+                elements.statusText.innerText = `Rolled ${rollValue}, but need ${stepsToWin} to win!`;
+                
+                // End movement state immediately since no animation is happening
+                state.isMoving = false;
             }
-
-            elements.statusText.innerText = `Rolled a ${rollValue}!`;
-            state.currentPos = newPos;
-            
-            updatePlayerPosition(state.currentPos, true);
-
-            setTimeout(() => checkTriggers(state.currentPos), 900);
         }, 500);
     }
 
