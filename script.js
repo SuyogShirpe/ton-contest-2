@@ -316,47 +316,67 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- DUMMY SBT (SOULBOUND TOKEN) LOGIC ---
 // ==========================================
 
+// ==========================================
+// --- DOG STICKER COLLECTION LOGIC ---
+// ==========================================
+
+// Array of your sticker paths
+const DOG_STICKERS = [
+    'stickers/dogs-sticker1.webp',
+    'stickers/dogs-sticker2.webp',
+    'stickers/dogs-sticker3.webp',
+    'stickers/dogs-sticker4.webp',
+    'stickers/dogs-sticker5.webp'
+];
+
 function handleClaimSBT() {
     const btn = document.getElementById('claim-sbt-btn');
-    btn.innerText = "Minting on TON...";
+    btn.innerText = "Minting Sticker...";
     btn.disabled = true;
 
-    // Simulate blockchain delay
+    // Simulate delay
     setTimeout(() => {
-        // Save win status locally
-        const wins = parseInt(localStorage.getItem('ton_crusher_wins') || '0');
-        localStorage.setItem('ton_crusher_wins', wins + 1);
+        // 1. Pick a random dog sticker
+        const randomSticker = DOG_STICKERS[Math.floor(Math.random() * DOG_STICKERS.length)];
 
-        // Update UI
+        // 2. Load current collection (or create empty array if first win)
+        let collection = JSON.parse(localStorage.getItem('ton_crusher_collection') || '[]');
+        
+        // 3. Add the new sticker to the collection and save it
+        collection.push(randomSticker);
+        localStorage.setItem('ton_crusher_collection', JSON.stringify(collection));
+
+        // 4. Show the sticker on the Win Screen
         btn.style.display = 'none';
         document.getElementById('badge-container').innerHTML = `
             <div class="sbt-badge">
-                <span class="sbt-icon">🏆</span>
-                <span class="sbt-text">Winner SBT</span>
+                <img src="${randomSticker}" alt="Dog Sticker" class="sticker-img" />
             </div>
         `;
-        document.getElementById('win-message').innerText = "Badge successfully bound to your account!";
+        document.getElementById('win-message').innerText = "Sticker safely stored in your vault!";
         
-        // Trigger a fake "Transaction Success" alert
-        alert("Transaction Confirmed! SBT #00" + (wins + 1) + " has been issued.");
-        
-        // Refresh the vault on the home screen in the background
+        // 5. Refresh the vault on the home screen
         loadBadges(); 
-    }, 2000);
+    }, 1500); // Shortened the fake delay so it feels snappier
 }
 
 function loadBadges() {
-    const wins = parseInt(localStorage.getItem('ton_crusher_wins') || '0');
+    // Get the array of collected stickers
+    let collection = JSON.parse(localStorage.getItem('ton_crusher_collection') || '[]');
     const badgeDisplay = document.getElementById('badge-display');
     
-    // Only update if the element exists on the page
-    if (wins > 0 && badgeDisplay) {
+    if (collection.length > 0 && badgeDisplay) {
+        // Loop through the collected images and create an HTML string of <img> tags
+        const stickersHTML = collection.map(imgSrc => 
+            `<img src="${imgSrc}" class="vault-sticker" alt="Collected Dog" />`
+        ).join('');
+
         badgeDisplay.innerHTML = `
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                ${Array(wins).fill().map(() => '<span title="Winner SBT">🏆</span>').join('')}
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                ${stickersHTML}
             </div>
-            <p style="font-size: 0.7rem; color: var(--bull-green); margin-top: 5px;">
-                Verified: ${wins} Soulbound Badge(s) found.
+            <p style="font-size: 0.75rem; color: var(--bull-green); margin-top: 10px; font-weight: 600;">
+                Collection Size: ${collection.length} Dog(s)
             </p>
         `;
     }
