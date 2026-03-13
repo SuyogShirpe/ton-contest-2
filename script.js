@@ -32,8 +32,8 @@ document.addEventListener('DOMContentLoaded', () => {
             48: 15   // The Ultimate Rug Pull (Brutal drop right at the end!)
         },    
         diceImages: [
-            'assests/dice1.png', 'assests/dice2.png', 'assests/dice3.png', 
-            'assests/dice4.png', 'assests/dice5.png', 'assests/dice6.png'
+            'assets/dice1.png', 'assets/dice2.png', 'assets/dice3.png', 
+            'assets/dice4.png', 'assets/dice5.png', 'assets/dice6.png'
         ]
     };
 
@@ -198,42 +198,45 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Gameplay Logic ---
-    // --- Gameplay Logic ---
     function handleRoll() {
-        if (state.isMoving || state.currentPos >= CONFIG.maxPos) return;
-        state.isMoving = true;
+    if (state.isMoving || state.currentPos >= CONFIG.maxPos) return;
+    state.isMoving = true;
+    
+    elements.diceDisplay.classList.add('rolling');
+    elements.statusText.innerText = "Trading...";
+
+    setTimeout(() => {
+        elements.diceDisplay.classList.remove('rolling');
         
-        elements.diceDisplay.classList.add('rolling');
-        elements.statusText.innerText = "Trading...";
+        const rollIndex = Math.floor(Math.random() * 6);
+        const rollValue = rollIndex + 1;
+        elements.diceDisplay.src = CONFIG.diceImages[rollIndex];
+        
+        // Calculate the exact distance needed
+        const stepsToWin = CONFIG.maxPos - state.currentPos;
 
-        setTimeout(() => {
-            elements.diceDisplay.classList.remove('rolling');
-            
-            const rollIndex = Math.floor(Math.random() * 6);
-            const rollValue = rollIndex + 1;
-            elements.diceDisplay.src = CONFIG.diceImages[rollIndex];
-            
-            // Calculate how many steps are needed to reach the end
-            const stepsToWin = CONFIG.maxPos - state.currentPos;
-
-            // --- EXACT ROLL LOGIC ---
-            if (rollValue <= stepsToWin) {
-                // If roll is less than or equal to required steps, move normally
-                state.currentPos += rollValue;
-                elements.statusText.innerText = `Rolled a ${rollValue}!`;
-                updatePlayerPosition(state.currentPos, true);
-                
-                // Only check for win/candles if we actually moved
-                setTimeout(() => checkTriggers(state.currentPos), 900);
-            } else {
-                // If roll is too high, the player doesn't move
-                elements.statusText.innerText = `Rolled ${rollValue}, but need ${stepsToWin} to win!`;
-                
-                // End movement state immediately since no animation is happening
-                state.isMoving = false;
-            }
-        }, 500);
-    }
+        // --- EXACT ROLL TO WIN LOGIC ---
+        if (rollValue === stepsToWin) {
+            // Perfect roll! Move to 50 and win
+            state.currentPos = CONFIG.maxPos;
+            elements.statusText.innerText = `Rolled a ${rollValue}! Target Hit!`;
+            updatePlayerPosition(state.currentPos, true);
+            setTimeout(() => checkTriggers(state.currentPos), 900);
+        } 
+        else if (rollValue < stepsToWin) {
+            // Normal move
+            state.currentPos += rollValue;
+            elements.statusText.innerText = `Rolled a ${rollValue}!`;
+            updatePlayerPosition(state.currentPos, true);
+            setTimeout(() => checkTriggers(state.currentPos), 900);
+        } 
+        else {
+            // Roll was too high (e.g., at 49, rolled a 4)
+            elements.statusText.innerText = `Rolled ${rollValue}... Need exactly ${stepsToWin} to win!`;
+            state.isMoving = false; // Player stays put
+        }
+    }, 500);
+}
 
     function checkTriggers(pos) {
         let triggerHit = false;
@@ -274,6 +277,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetGame() {
         // 1. Hide the win screen overlay
         elements.winScreen.style.display = 'none';
+        document.getElementById('claim-sbt-btn').style.display = 'block';
+        document.getElementById('claim-sbt-btn').innerText = 'Claim Winner SBT 🏆';
+        document.getElementById('claim-sbt-btn').disabled = false;
+        document.getElementById('badge-container').innerHTML = ''; // Clears the badge
+        document.getElementById('win-message').innerText = "You've reached the goal! Claim your proof of win.";
         
         // 2. Reset the game variables
         state.currentPos = 1;
@@ -303,3 +311,59 @@ document.addEventListener('DOMContentLoaded', () => {
     // Boot up
     init();
 });
+
+// ==========================================
+// --- DUMMY SBT (SOULBOUND TOKEN) LOGIC ---
+// ==========================================
+
+function handleClaimSBT() {
+    const btn = document.getElementById('claim-sbt-btn');
+    btn.innerText = "Minting on TON...";
+    btn.disabled = true;
+
+    // Simulate blockchain delay
+    setTimeout(() => {
+        // Save win status locally
+        const wins = parseInt(localStorage.getItem('ton_crusher_wins') || '0');
+        localStorage.setItem('ton_crusher_wins', wins + 1);
+
+        // Update UI
+        btn.style.display = 'none';
+        document.getElementById('badge-container').innerHTML = `
+            <div class="sbt-badge">
+                <span class="sbt-icon">🏆</span>
+                <span class="sbt-text">Winner SBT</span>
+            </div>
+        `;
+        document.getElementById('win-message').innerText = "Badge successfully bound to your account!";
+        
+        // Trigger a fake "Transaction Success" alert
+        alert("Transaction Confirmed! SBT #00" + (wins + 1) + " has been issued.");
+        
+        // Refresh the vault on the home screen in the background
+        loadBadges(); 
+    }, 2000);
+}
+
+function loadBadges() {
+    const wins = parseInt(localStorage.getItem('ton_crusher_wins') || '0');
+    const badgeDisplay = document.getElementById('badge-display');
+    
+    // Only update if the element exists on the page
+    if (wins > 0 && badgeDisplay) {
+        badgeDisplay.innerHTML = `
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${Array(wins).fill().map(() => '<span title="Winner SBT">🏆</span>').join('')}
+            </div>
+            <p style="font-size: 0.7rem; color: var(--bull-green); margin-top: 5px;">
+                Verified: ${wins} Soulbound Badge(s) found.
+            </p>
+        `;
+    }
+}
+
+// Attach the click event to the claim button
+document.getElementById('claim-sbt-btn').addEventListener('click', handleClaimSBT);
+
+// Call loadBadges() when the window loads
+window.onload = loadBadges;
