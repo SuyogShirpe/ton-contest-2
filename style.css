@@ -208,24 +208,28 @@ body {
 }
 
 /* --- Player Token --- */
+/* --- Player Token --- */
 #player {
-  width: 8%;
-  aspect-ratio: 1 / 1;
-  position: absolute;
-  
-  /* THE FIX: Increased from 0.85s to 1.5s for a smooth, slower glide */
-  transition: 
-    left 1.5s cubic-bezier(0.25, 1, 0.5, 1), 
-    top 1.5s cubic-bezier(0.25, 1, 0.5, 1), 
-    transform 0.4s ease;
+    width: 8%;
+    aspect-ratio: 1 / 1;
+    position: absolute;
     
-  z-index: 10;
-  transform: translate(-50%, -50%);
-  object-fit: cover;
-  border-radius: 50%;
-  background-color: var(--cell-dark);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
+    /* THE FIX 1: 'ease-in-out' makes it slowly speed up and slowly slow down */
+    transition: 
+        left 1.5s ease-in-out, 
+        top 1.5s ease-in-out, 
+        transform 0.4s ease;
+    
+    /* THE FIX 2: Hardware Acceleration. Tells the browser's GPU to process this */
+    will-change: top, left, transform;
+      
+    z-index: 10;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    border-radius: 50%;
+    background-color: var(--cell-dark);
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.6));
 }
 
 /* --- Controls --- */
@@ -283,17 +287,27 @@ button:active {
 }
 
 /* --- Win Screen (Full Screen Overlay) --- */
+/* --- Win Screen (Full Screen Overlay) --- */
 #win-screen {
   display: none;
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(18, 18, 18, 0.95);
-  z-index: 999;
+  top: 0; 
+  left: 0;
+  width: 100vw; 
+  height: 100vh;
+  height: 100dvh; /* Modern mobile fix for URL bars */
+  
+  /* THE FIX: This overrides the 400px limit from the .screen class */
+  max-width: none; 
+  
+  background: rgba(18, 18, 18, 0.96);
+  z-index: 9999; /* Boosted just to be safe */
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px); /* Blurs the game board in the background beautifully */
+  margin: 0;
+  padding: 0;
 }
 
 #win-screen h2 {
