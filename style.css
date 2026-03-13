@@ -17,9 +17,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
@@ -30,29 +28,31 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Centering everything nicely with a safe padding */
+  justify-content: center; 
   min-height: 100vh;
-  padding: 20px 15px;
-  overflow: hidden; /* Prevents body scrolling */
+  padding: 2vh 15px; 
+  overflow: hidden; 
 }
 
 /* --- Typography & Headers --- */
 .header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px; /* Slightly more space below header */
 }
 
 .header h1 {
-  font-size: 1.6rem;
+  font-size: 1.8rem; /* Slightly larger for impact */
   color: var(--ton-blue);
   text-shadow: 0 0 15px var(--ton-blue-glow);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   letter-spacing: 0.5px;
 }
 
 .signature {
   font-style: italic;
   color: var(--text-muted);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 /* --- Screen Management --- */
@@ -64,50 +64,44 @@ body {
   align-items: center;
   animation: fadeIn 0.4s ease-in-out;
 }
+
 .screen.active {
   display: flex;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- Token Selection (3x2 Grid) --- */
 #start-screen h2 {
-  margin-bottom: 15px;
-  font-size: 1.2rem;
+  margin-bottom: 18px; /* Better gap above grid */
+  font-size: 1.25rem;
   font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .token-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 12px; /* Increased from 10px for better touch separation */
   width: 100%;
-  max-width: 340px;
-  margin-bottom: 25px;
+  max-width: 350px;
+  margin-bottom: 30px; /* Pushes the start button down clearly */
 }
 
 .token-option {
   background: var(--cell-dark);
   border: 1.5px solid transparent;
-  border-radius: 12px;
-  padding: 10px 4px;
+  border-radius: 14px; /* Slightly softer corners */
+  padding: 12px 8px; /* Increased padding for better thumb target */
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 8px; /* Clearer gap between image and text */
   cursor: pointer;
-  transition:
-    transform 0.15s ease,
-    border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .token-option:active {
@@ -117,12 +111,12 @@ body {
 .token-option.selected {
   border-color: var(--ton-blue);
   background: rgba(0, 152, 234, 0.08);
-  box-shadow: 0 4px 10px rgba(0, 152, 234, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 152, 234, 0.15);
 }
 
 .token-option span {
   font-weight: 600;
-  font-size: 0.7rem;
+  font-size: 0.75rem; /* Crisper text */
   letter-spacing: 0.5px;
   color: var(--text-muted);
 }
@@ -132,8 +126,8 @@ body {
 }
 
 .token-preview {
-  width: 38px;
-  height: 38px;
+  width: 42px; /* Slightly larger tokens */
+  height: 42px;
 }
 
 .token-preview img {
@@ -143,6 +137,7 @@ body {
   border-radius: 50%;
   background-color: var(--cell-light);
   border: 1px solid rgba(255, 255, 255, 0.08);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 /* --- Main Game Board --- */
@@ -157,8 +152,8 @@ body {
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: repeat(10, 1fr);
   width: 100%;
-  height: 60vh;
-  max-height: 620px;
+  height: 58vh; /* Balanced height to allow controls room to breathe */
+  max-height: 600px;
   min-height: 400px;
   background: #080808;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -170,40 +165,29 @@ body {
 
 #lines-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 0; left: 0; width: 100%; height: 100%;
   z-index: 5;
   pointer-events: none;
 }
 
 .cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.08); /* Dimmed slightly more for cleaner look */
-    font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.08); 
+  font-weight: 700;
 }
 
-.cell:nth-child(even) {
-  background-color: var(--cell-dark);
-}
-.cell:nth-child(odd) {
-  background-color: var(--cell-light);
-}
+.cell:nth-child(even) { background-color: var(--cell-dark); }
+.cell:nth-child(odd) { background-color: var(--cell-light); }
 
 /* --- Player Token --- */
 #player {
   width: 8%;
   aspect-ratio: 1 / 1;
   position: absolute;
-  /* Smooth Glide Transition */
-  transition:
-    left 0.85s cubic-bezier(0.25, 1, 0.5, 1),
-    top 0.85s cubic-bezier(0.25, 1, 0.5, 1),
-    transform 0.4s ease;
+  transition: left 0.85s cubic-bezier(0.25, 1, 0.5, 1), top 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s ease;
   z-index: 10;
   transform: translate(-50%, -50%);
   object-fit: cover;
@@ -215,32 +199,39 @@ body {
 
 /* --- Controls --- */
 .controls {
-  margin-top: 12px;
+  margin-top: 18px; /* Increased gap separating board from controls */
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px; /* Increased gap between dice, text, and button */
 }
 
 .dice-display {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
 }
 
 button {
   background-color: var(--ton-blue);
   color: white;
   border: none;
-  padding: 12px 30px;
-  font-size: 1rem;
+  padding: 14px 30px; /* Slightly taller for better tapping */
+  font-size: 1.05rem;
   font-weight: 700;
   border-radius: 25px;
   cursor: pointer;
-  width: 70%;
-  max-width: 260px;
+  width: 75%;
+  max-width: 280px;
   box-shadow: 0 4px 15px var(--ton-blue-glow);
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+button:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px var(--ton-blue-glow);
 }
 
 #start-game-btn {
@@ -248,32 +239,25 @@ button {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(0, 152, 234, 0.4);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(0, 152, 234, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(0, 152, 234, 0);
-  }
+  0% { box-shadow: 0 0 0 0 rgba(0, 152, 234, 0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(0, 152, 234, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 152, 234, 0); }
 }
 
 #status {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   color: var(--text-muted);
-  min-height: 18px;
+  min-height: 20px; /* Prevents button jump if text is empty */
 }
 
 /* --- Win Screen (Full Screen Overlay) --- */
 #win-screen {
   display: none;
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(18, 18, 18, 0.96);
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(18, 18, 18, 0.95);
   z-index: 999;
   flex-direction: column;
   align-items: center;
@@ -283,9 +267,72 @@ button {
 
 #win-screen h2 {
   color: var(--bull-green);
-  font-size: 2.6rem;
+  font-size: 2.8rem;
   text-shadow: 0 0 20px rgba(0, 200, 83, 0.5);
-  margin-bottom: 10px;
+  margin-bottom: 5px; /* Tighter gap to badge */
+}
+
+/* Beautiful spacing for the text under the badge */
+#win-message {
+  font-size: 1rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 25px; /* Clear gap before buttons */
+  padding: 0 20px;
+  line-height: 1.4;
+}
+
+/* Ensures players don't miss-click */
+#claim-sbt-btn {
+  margin-bottom: 16px; 
+}
+
+/* --- Dummy SBT Badge --- */
+.sbt-badge {
+  width: 130px; /* Slightly larger for emphasis */
+  height: 130px;
+  background: radial-gradient(circle, #2a2a2a 0%, #080808 100%);
+  border: 2px solid var(--ton-blue);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 25px var(--ton-blue-glow);
+  margin: 20px 0; /* Consistent spacing above and below */
+  position: relative;
+  overflow: hidden;
+  animation: badgeFloat 3s ease-in-out infinite;
+}
+
+.sbt-badge::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: conic-gradient(transparent, var(--ton-blue), transparent 30%);
+  animation: rotateGlow 4s linear infinite;
+}
+
+.sbt-icon { font-size: 3.2rem; z-index: 2; margin-bottom: 4px; }
+
+.sbt-text {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--ton-blue);
+  text-transform: uppercase;
+  z-index: 2;
+  letter-spacing: 1.5px;
+}
+
+@keyframes rotateGlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes badgeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* --- SVG Candle Animations --- */
@@ -295,65 +342,12 @@ button {
   animation: drawIn 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-@keyframes drawIn {
-  to {
-    stroke-dashoffset: 0;
-  }
-}
+@keyframes drawIn { to { stroke-dashoffset: 0; } }
 
-.energy-stream {
-  animation:
-    flowData 0.8s linear infinite,
-    fadeInStream 1.5s ease-in forwards;
-  opacity: 0;
-}
-
-@keyframes flowData {
-  to {
-    stroke-dashoffset: -20;
-  }
-}
-
-@keyframes fadeInStream {
-  0%,
-  80% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 0.9;
-  }
-}
-
-.node-dot {
-  opacity: 0;
-  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-  animation-delay: 1.2s;
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.rolling {
-  animation: rollSpin 0.5s ease-in-out !important;
-}
+.rolling { animation: rollSpin 0.5s ease-in-out !important; }
 
 @keyframes rollSpin {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.4) rotate(360deg);
-    filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.6));
-  }
-  100% {
-    transform: scale(1) rotate(720deg);
-  }
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.4) rotate(360deg); filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.6)); }
+  100% { transform: scale(1) rotate(720deg); }
 }
