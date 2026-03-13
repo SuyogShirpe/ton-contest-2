@@ -57,16 +57,15 @@ body {
 
 /* --- Screen Management --- */
 .screen {
-  display: none;
+  display: none; /* This must be here */
   width: 100%;
   max-width: 400px;
   flex-direction: column;
   align-items: center;
-  animation: fadeIn 0.4s ease-in-out;
 }
 
 .screen.active {
-  display: flex;
+  display: flex; /* This makes the selected screen visible */
 }
 
 @keyframes fadeIn {
@@ -464,4 +463,62 @@ button:active {
   0% { transform: scale(1) rotate(0deg); }
   50% { transform: scale(1.4) rotate(360deg); filter: drop-shadow(0 15px 15px rgba(0, 0, 0, 0.6)); }
   100% { transform: scale(1) rotate(720deg); }
+}
+
+/* =========================================
+   ENDGAME: 100% COMPLETION STATE
+========================================= */
+
+/* Transforms the Vault background and border to Gold */
+.vault-completed {
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.1) 0%, rgba(18, 18, 18, 0.95) 100%);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15), inset 0 4px 15px rgba(0, 0, 0, 0.6);
+    transition: all 0.5s ease;
+}
+
+/* Makes the Vault Header Gold */
+.vault-completed h3 {
+    color: #FFD700;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    letter-spacing: 1px;
+}
+
+/* Upgrades the Sticker Borders to Gold */
+.vault-completed .vault-sticker {
+    border-color: rgba(255, 215, 0, 0.6);
+    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);
+}
+
+/* The ultimate Master Collector Badge */
+.master-stats {
+    background: linear-gradient(90deg, #FF8C00, #FFD700);
+    color: #000; /* Black text for high contrast */
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    animation: pulseGold 2s infinite;
+    font-size: 0.8rem;
+    padding: 10px 20px;
+}
+
+@keyframes pulseGold {
+    0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.5); }
+    70% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+}
+
+/* Secondary Button Style (Muted/Outlined) */
+.secondary-btn {
+    background-color: transparent !important;
+    border: 1.5px solid var(--text-muted) !important;
+    color: var(--text-muted) !important;
+    box-shadow: none !important;
+    margin-top: 10px;
+    font-size: 0.9rem !important;
+    padding: 10px 20px !important;
+}
+
+.secondary-btn:active {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    transform: scale(0.98);
 }
