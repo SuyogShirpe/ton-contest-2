@@ -15,23 +15,23 @@ document.addEventListener("DOMContentLoaded", () => {
     goHomeBtn: document.getElementById("go-home-btn"), // Reference to your new button
     claimSbtBtn: document.getElementById("claim-sbt-btn"),
     svgOverlay: document.getElementById("lines-overlay"),
-};
+  };
 
-// --- Screen Management Logic ---
-function showScreen(screenId) {
+  // --- Screen Management Logic ---
+  function showScreen(screenId) {
     // 1. Hide all main screens
-    elements.startScreen.classList.remove('active');
-    elements.gameScreen.classList.remove('active');
-    
+    elements.startScreen.classList.remove("active");
+    elements.gameScreen.classList.remove("active");
+
     // 2. Show only the one requested
     const target = document.getElementById(screenId);
     if (target) {
-        target.classList.add('active');
+      target.classList.add("active");
     }
-}
+  }
 
-// --- Play Again Logic ---
-elements.playAgainBtn.addEventListener("click", () => {
+  // --- Play Again Logic ---
+  elements.playAgainBtn.addEventListener("click", () => {
     // Reset game logic
     state.currentPos = 0;
     state.isMoving = false;
@@ -46,18 +46,18 @@ elements.playAgainBtn.addEventListener("click", () => {
     // Refresh Vault and go to start
     loadBadges();
     showScreen("start-screen");
-});
+  });
 
-// --- Go to Home Logic ---
-// --- Go to Home Logic ---
-elements.goHomeBtn.addEventListener("click", () => {
+  // --- Go to Home Logic ---
+  // --- Go to Home Logic ---
+  elements.goHomeBtn.addEventListener("click", () => {
     // 1. Reset Game Logic
     state.currentPos = 0;
     state.isMoving = false;
 
     // 2. IMPORTANT: Hide the Win Screen Overlay
     elements.winScreen.style.display = "none";
-    
+
     // 3. Reset the "Claim" button UI for next time
     elements.claimSbtBtn.style.display = "block";
     elements.claimSbtBtn.innerText = "Claim Winner Sticker 🏆";
@@ -69,10 +69,10 @@ elements.goHomeBtn.addEventListener("click", () => {
 
     // 5. Explicitly switch to the start screen
     showScreen("start-screen");
-    
+
     // 6. Optional: Reset status text for the next round
     elements.statusText.innerText = "Select a token to begin";
-});
+  });
 
   // --- Game Configuration & State ---
   const CONFIG = {
@@ -272,39 +272,59 @@ elements.goHomeBtn.addEventListener("click", () => {
     if (state.isMoving || state.currentPos >= CONFIG.maxPos) return;
     state.isMoving = true;
 
+    // Start the dice spinning animation
     elements.diceDisplay.classList.add("rolling");
     elements.statusText.innerText = "Trading...";
 
+    // 1. FIRST DELAY: Wait 500ms for the dice spinning animation to finish
     setTimeout(() => {
-      elements.diceDisplay.classList.remove("rolling");
+        elements.diceDisplay.classList.remove("rolling");
 
-      const rollIndex = Math.floor(Math.random() * 6);
-      const rollValue = rollIndex + 1;
-      elements.diceDisplay.src = CONFIG.diceImages[rollIndex];
+        // Calculate the result
+        const rollIndex = Math.floor(Math.random() * 6);
+        const rollValue = rollIndex + 1;
+        
+        // IMMEDIATELY show the final dice image and update the text
+        elements.diceDisplay.src = CONFIG.diceImages[rollIndex];
+        elements.statusText.innerText = `Rolled a ${rollValue}...`;
 
-      // Calculate the exact distance needed
-      const stepsToWin = CONFIG.maxPos - state.currentPos;
+        // ==========================================
+        // 2. THE SUSPENSE PAUSE: Wait 1 full second (1000ms)
+        // ==========================================
+        setTimeout(() => {
+            
+            // Calculate the exact distance needed
+            const stepsToWin = CONFIG.maxPos - state.currentPos;
 
-      // --- EXACT ROLL TO WIN LOGIC ---
-      if (rollValue === stepsToWin) {
-        // Perfect roll! Move to 50 and win
-        state.currentPos = CONFIG.maxPos;
-        elements.statusText.innerText = `Rolled a ${rollValue}! Target Hit!`;
-        updatePlayerPosition(state.currentPos, true);
-        setTimeout(() => checkTriggers(state.currentPos), 900);
-      } else if (rollValue < stepsToWin) {
-        // Normal move
-        state.currentPos += rollValue;
-        elements.statusText.innerText = `Rolled a ${rollValue}!`;
-        updatePlayerPosition(state.currentPos, true);
-        setTimeout(() => checkTriggers(state.currentPos), 900);
-      } else {
-        // Roll was too high (e.g., at 49, rolled a 4)
-        elements.statusText.innerText = `Rolled ${rollValue}... Need exactly ${stepsToWin} to win!`;
-        state.isMoving = false; // Player stays put
-      }
-    }, 500);
-  }
+            // --- EXACT ROLL TO WIN LOGIC ---
+            if (rollValue === stepsToWin) {
+                // Perfect roll! Move to 50 and win
+                state.currentPos = CONFIG.maxPos;
+                elements.statusText.innerText = `Target Hit!`;
+                updatePlayerPosition(state.currentPos, true);
+                
+                // Wait for the CSS glide to finish before checking win
+                setTimeout(() => checkTriggers(state.currentPos), 1600);
+                
+            } else if (rollValue < stepsToWin) {
+                // Normal move
+                state.currentPos += rollValue;
+                elements.statusText.innerText = `Moving ${rollValue} steps!`;
+                updatePlayerPosition(state.currentPos, true);
+                
+                // Wait for the CSS glide to finish before checking candles
+                setTimeout(() => checkTriggers(state.currentPos), 1600);
+                
+            } else {
+                // Roll was too high (e.g., at 49, rolled a 4)
+                elements.statusText.innerText = `Rolled too high... Need exactly ${stepsToWin} to win!`;
+                state.isMoving = false; // Player stays put, allow them to roll again
+            }
+
+        }, 1000); // <-- This is the 1-second pause before the player moves
+
+    }, 500); // <-- This is your original 500ms dice animation delay
+}
 
   function checkTriggers(pos) {
     let triggerHit = false;

@@ -146,47 +146,79 @@ body {
   margin: 0 auto;
 }
 
+/* --- Main Game Board --- */
 #board {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(10, 1fr);
-  width: 100%;
-  height: 58vh; /* Balanced height to allow controls room to breathe */
-  max-height: 600px;
-  min-height: 400px;
-  background: #080808;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
-  overflow: hidden;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    
+    /* THE FIX: Adds crisp 1px grid lines between all cells */
+    gap: 1px; 
+    background: rgba(255, 255, 255, 0.05); /* The color of the grid lines */
+    
+    width: 100%;
+    height: 58vh; 
+    max-height: 600px;
+    min-height: 400px;
+    
+    /* Slightly thicker outer border to contain the grid */
+    border: 2px solid rgba(255, 255, 255, 0.15); 
+    border-radius: 12px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 152, 234, 0.1);
+    overflow: hidden;
 }
 
 #lines-overlay {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  z-index: 5;
-  pointer-events: none;
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 5;
+    pointer-events: none;
 }
 
 .cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.08); 
-  font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem; /* Slightly larger text */
+    
+    /* THE FIX: Increased opacity from 0.08 to 0.25 so you can actually read the numbers */
+    color: rgba(255, 255, 255, 0.25); 
+    font-weight: 700;
+    
+    /* Adds a subtle inner shadow to make each cell look like a tactile button */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+    position: relative;
 }
 
-.cell:nth-child(even) { background-color: var(--cell-dark); }
-.cell:nth-child(odd) { background-color: var(--cell-light); }
+/* Base cell colors */
+.cell:nth-child(even) { background-color: #1a1a1a; }
+.cell:nth-child(odd) { background-color: #222222; }
+
+/* Highlight the Start (Square 1) and End (Square 50) so the player knows where to go */
+.cell:last-child {
+    color: rgba(255, 255, 255, 0.5); /* Start square slightly brighter */
+}
+
+/* The exact target square! Assuming your grid generates square 50 as the first DOM element */
+.cell:first-child {
+    background: radial-gradient(circle, rgba(0, 200, 83, 0.2) 0%, #1a1a1a 100%);
+    color: var(--bull-green);
+    border: 1px solid rgba(0, 200, 83, 0.3);
+}
 
 /* --- Player Token --- */
 #player {
   width: 8%;
   aspect-ratio: 1 / 1;
   position: absolute;
-  transition: left 0.85s cubic-bezier(0.25, 1, 0.5, 1), top 0.85s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s ease;
+  
+  /* THE FIX: Increased from 0.85s to 1.5s for a smooth, slower glide */
+  transition: 
+    left 1.5s cubic-bezier(0.25, 1, 0.5, 1), 
+    top 1.5s cubic-bezier(0.25, 1, 0.5, 1), 
+    transform 0.4s ease;
+    
   z-index: 10;
   transform: translate(-50%, -50%);
   object-fit: cover;
